@@ -1,0 +1,7 @@
+version: "3"
+services:
+  koderktmongodb:
+    image: mongo:latest
+    container_name: "koderktmongodb"
+    ports:
+      - 27017:27017
