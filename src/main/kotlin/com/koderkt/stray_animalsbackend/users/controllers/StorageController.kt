@@ -19,10 +19,6 @@ class StorageController {
         val message = file?.let { service.uploadFile(it) }
         return ResponseEntity.ok(message)
     }
-
-
-
-
     @GetMapping("/download/{fileName}")
     fun downloadFile(@PathVariable fileName: String): ResponseEntity<ByteArrayResource?>? {
         println(fileName)

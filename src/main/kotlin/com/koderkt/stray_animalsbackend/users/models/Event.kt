@@ -11,7 +11,7 @@ class Event(
     var date: String,
     var time: String,
     var coordinates: List<Double>,
-        var description: String,
+    var description: String,
     var images: List<String>,
     var status: Boolean,
     var volunteersRequiredCount : Int,

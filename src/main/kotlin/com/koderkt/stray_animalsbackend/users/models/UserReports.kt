@@ -13,5 +13,4 @@ class UserReports(
     var urls: List<String>,
     var ngoId: String,
     var description: String
-) {
-}
+)

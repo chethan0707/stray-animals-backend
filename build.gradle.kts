@@ -28,6 +28,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-aws-core:2.2.6.RELEASE")
     implementation("com.auth0:java-jwt:4.2.1")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
+
+    compileOnly("org.mapstruct:mapstruct-processor:1.5.3.Final")
 }
 
 tasks.withType<KotlinCompile> {

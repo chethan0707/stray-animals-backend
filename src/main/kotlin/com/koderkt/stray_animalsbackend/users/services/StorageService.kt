@@ -23,6 +23,7 @@ class StorageService {
             val fileObj = convertMultiPartFileToFile(file)
 
             val fileName =  file.originalFilename
+            println(fileName)
             if (fileName != null) {
                 deleteFile(fileName)
             }
