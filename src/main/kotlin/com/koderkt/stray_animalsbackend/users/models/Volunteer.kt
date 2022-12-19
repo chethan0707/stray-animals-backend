@@ -1,15 +1,17 @@
 package com.koderkt.stray_animalsbackend.users.models
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
+@Document(collection = "volunteers")
 class Volunteer(
     @Id
-    val id:String,
-    val userName: String,
-    val email:String,
-    val phone: String,
-    val rank:String,
-    val rescueCount: Int,
-    val ngos: List<String>
+    var id : String?,
+    var userName: String,
+    var email:String,
+    var phone: String,
+    var rescueCount: Int,
+    var city: String,
+    var ngos: MutableList<String>
 ) {
 }
