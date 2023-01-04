@@ -19,6 +19,8 @@ interface UserServices{
 
 
     fun updateReport(userReport: UserReports)
+
+    fun getUserReports(userEmail: String):List<UserReports>
 }
 
 

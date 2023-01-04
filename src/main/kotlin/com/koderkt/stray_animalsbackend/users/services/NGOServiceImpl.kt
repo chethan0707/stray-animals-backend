@@ -1,6 +1,7 @@
 package com.koderkt.stray_animalsbackend.users.services
 
 import com.koderkt.stray_animalsbackend.users.models.*
+import com.koderkt.stray_animalsbackend.users.models.dto.AssignVolunteerDTO
 import com.koderkt.stray_animalsbackend.users.repositories.EventRepository
 import com.koderkt.stray_animalsbackend.users.repositories.NGORepository
 import com.koderkt.stray_animalsbackend.users.repositories.UserReportsRepository
@@ -9,17 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.geo.Point
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint
 import org.springframework.stereotype.Service
-import java.time.Duration
 import java.util.*
 
 @Service
 class NGOServiceImpl : NGOServices {
     @Autowired
     lateinit var ngoRepository: NGORepository
-@Autowired
-lateinit var userReportsRepository: UserReportsRepository
+    @Autowired
+    lateinit var userReportsRepository: UserReportsRepository
     @Autowired
     lateinit var eventRepository: EventRepository
+
+    @Autowired
+    lateinit var volunteerServices: VolunteerServices
     override fun createNGO(newNGO: NGODto): String {
         return try {
             val exi = ngoRepository.findNGOByEmail(newNGO.email)
@@ -37,6 +40,7 @@ lateinit var userReportsRepository: UserReportsRepository
                 email = newNGO.email,
                 phone = newNGO.phone,
                 role = "NGO",
+                rescueCount = 0,
                 userReports = mutableListOf(),
                 events = mutableListOf()
             )
@@ -57,6 +61,7 @@ lateinit var userReportsRepository: UserReportsRepository
             (e.message.toString())
         }
     }
+
 
     override fun deleteNGO(id: String): String {
         return try {
@@ -98,8 +103,59 @@ lateinit var userReportsRepository: UserReportsRepository
         ngoRepository.save(ngoInfo)
     }
 
+    override fun updateEvent(event: Event, ngoEmail: String) {
+        val exiEvent = eventRepository.findById(event.eventId).get()
+        exiEvent.eventName = event.eventName
+        exiEvent.date = event.date
+        exiEvent.status = event.status
+        exiEvent.coordinates = event.coordinates
+        exiEvent.description = event.description
+        exiEvent.time = event.time
+        exiEvent.images = event.images
+
+        exiEvent.volunteersRequiredCount = event.volunteersRequiredCount
+        exiEvent.volunteers = event.volunteers
+        eventRepository.save(exiEvent)
+    }
+
+
     override fun getReports(email: String): List<UserReports> {
         return userReportsRepository.findByngoId(email)
     }
+    override fun assignVolunteer(assignVolunteerDTO: AssignVolunteerDTO) {
+        val volunteer = volunteerServices.getVolunteer(assignVolunteerDTO.volunteerId).get()
+        val report = userReportsRepository.findById(assignVolunteerDTO.reportId).get()
+        report.volunteer = assignVolunteerDTO.volunteerId
+        userReportsRepository.save(report)
+        volunteer.reports.add(assignVolunteerDTO.reportId)
+        volunteerServices.saveVolunteer(volunteer)
+    }
 
+    override fun getVolunteers(email: String): List<Volunteer> {
+        return volunteerServices.getVolunteersOfNGO(email)
+    }
+
+    override fun deleteVolunteer(volEmail: String, ngoEmail: String) {
+        try{
+
+            val volunteer = volunteerServices.getVolunteer(volEmail).get()
+            volunteer.ngos = ""
+            volunteer.reports = mutableListOf()
+            volunteer.events = mutableListOf()
+            volunteerServices.saveVolunteer(volunteer)
+            val ngo = ngoRepository.findNGOByEmail(ngoEmail).get()
+            ngo.volunteers.remove(volEmail)
+            ngoRepository.save(ngo)
+        }catch (e:Exception){
+            println(e.message)
+        }
+    }
+
+    override fun getVolunteersOfEvent(volEmails: List<String>): MutableList<Volunteer> {
+        val volunteers = mutableListOf<Volunteer>()
+        for (i in volEmails){
+            volunteers.add(volunteerServices.getVolunteer(i).get())
+        }
+        return volunteers
+    }
 }

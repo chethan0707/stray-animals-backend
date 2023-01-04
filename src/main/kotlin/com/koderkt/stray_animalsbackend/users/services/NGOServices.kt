@@ -1,6 +1,7 @@
 package com.koderkt.stray_animalsbackend.users.services
 
 import com.koderkt.stray_animalsbackend.users.models.*
+import com.koderkt.stray_animalsbackend.users.models.dto.AssignVolunteerDTO
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -20,8 +21,17 @@ interface NGOServices {
 
     fun addEvent(event:  Event, ngoEmail:String)
 
+    fun updateEvent(event:  Event, ngoEmail:String)
+
     fun getEvents(email: String): List<Event>
 
     fun getReports(email: String): List<UserReports>
 
+    fun assignVolunteer(assignVolunteerDTO: AssignVolunteerDTO)
+
+    fun getVolunteers(email: String) : List<Volunteer>
+
+    fun deleteVolunteer( volEmail: String, ngoEmail: String)
+
+    fun getVolunteersOfEvent(volEmails: List<String>) :MutableList<Volunteer>
 }

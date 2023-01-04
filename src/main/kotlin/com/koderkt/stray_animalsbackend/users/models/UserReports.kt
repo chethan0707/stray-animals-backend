@@ -8,6 +8,7 @@ class UserReports(
     @Id
     var caseId: String,
     var userId: String,
+    var volunteer: String?,
     var coordinates: List<Double>,
     var status: Boolean,
     var urls: List<String>,

@@ -9,4 +9,7 @@ import java.util.*
 @Repository
 interface VolunteerRepository: MongoRepository<Volunteer, String> {
     fun findVolunteerByEmail(email:String): Optional<Volunteer>
+
+    fun findAllByNgos(email: String): List<Volunteer>
+
 }

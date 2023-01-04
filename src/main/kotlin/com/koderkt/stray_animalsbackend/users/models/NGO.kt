@@ -20,7 +20,8 @@ class NGO(
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     val coordinates: GeoJsonPoint?,
     val volunteers: MutableList<String>,
-    val events: MutableList<String>
+    val events: MutableList<String>,
+    var rescueCount: Int
 ) {
 
 }

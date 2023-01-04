@@ -1,26 +1,29 @@
 package com.koderkt.stray_animalsbackend.users.controllers
 
 import com.koderkt.stray_animalsbackend.users.models.*
+import com.koderkt.stray_animalsbackend.users.models.dto.AssignVolunteerDTO
 import com.koderkt.stray_animalsbackend.users.models.dto.EventDTO
+import com.koderkt.stray_animalsbackend.users.models.dto.VolunteersRequestDTO
 import com.koderkt.stray_animalsbackend.users.services.NGOServices
+import org.apache.http.protocol.ResponseServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
 class NGOController {
-
     @Autowired
     lateinit var ngoServices: NGOServices
 
     @PostMapping("/ngo/create")
     fun createNGO(@RequestBody ngo: NGODto): ResponseEntity<HttpStatus> {
-        return try{
+        return try {
             ngoServices.createNGO(ngo)
             ResponseEntity.ok(HttpStatus.ACCEPTED)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             ResponseEntity.ok(HttpStatus.BAD_REQUEST)
         }
     }
@@ -33,23 +36,23 @@ class NGOController {
         } catch (e: Exception) {
             ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
         }
-    }
+    }                                                                                                                                                           
 
     @GetMapping("/ngos")
     fun getNGOs(): ResponseEntity<List<NGO>> {
         return try {
+            println("Hello")
             ResponseEntity.ok(ngoServices.getNGOs())
         } catch (e: Exception) {
             ResponseEntity.ok(listOf())
         }
     }
 
-
     @GetMapping("/ngo/get")
-    fun getUser(@RequestParam email: String): ResponseEntity<NGO?>{
+    fun getUser(@RequestParam email: String): ResponseEntity<NGO?> {
         println(email)
         val ngo = ngoServices.getNGO(email)
-        if(ngo.isPresent) {
+        if (ngo.isPresent) {
             println(ngo.get().role)
             return ResponseEntity.ok(ngo.get())
         }
@@ -67,39 +70,88 @@ class NGOController {
     }
 
     @GetMapping("/ngo/location")
-    fun getNGOsByLocation(@RequestParam city:String):ResponseEntity<List<NGO>>{
+    fun getNGOsByLocation(@RequestParam city: String): ResponseEntity<List<NGO>> {
         return ResponseEntity.ok(ngoServices.getNGOsByLocation(city))
     }
 
-
-
     @PostMapping("/ngo/event/add")
-    fun addEvent(@RequestBody eventDto:EventDTO):ResponseEntity<HttpStatus>{
-        return try{
+    fun addEvent(@RequestBody eventDto: EventDTO): ResponseEntity<HttpStatus> {
+        return try {
             ngoServices.addEvent(eventDto.event, eventDto.ngoEmail)
             ResponseEntity.ok(HttpStatus.ACCEPTED)
-        }catch (e: java.lang.Exception){
+        } catch (e: java.lang.Exception) {
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
+    @PostMapping("/ngo/event/update")
+    fun updateEvent(@RequestBody eventDto: EventDTO): ResponseEntity<HttpStatus> {
+        return try {
+            ngoServices.updateEvent(eventDto.event, eventDto.ngoEmail)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        } catch (e: java.lang.Exception) {
             ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @GetMapping("/ngo/events")
-    fun getEvents(@RequestParam("email") email: String):ResponseEntity<List<Event>>{
-        return try{
+    fun getEvents(@RequestParam("email") email: String): ResponseEntity<List<Event>> {
+        return try {
             ResponseEntity.ok(ngoServices.getEvents(email))
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println(e.message)
             ResponseEntity.ok(mutableListOf())
         }
     }
 
     @GetMapping("/ngo/reports/get")
-    fun getReports(@RequestParam("email") email: String): ResponseEntity<List<UserReports>>{
-        return try{
+    fun getReports(@RequestParam("email") email: String): ResponseEntity<List<UserReports>> {
+        return try {
             ResponseEntity.ok(ngoServices.getReports(email))
-        }catch(e: Exception) {
+        } catch (e: Exception) {
             ResponseEntity.ok(mutableListOf())
         }
     }
 
+
+    @PostMapping("/ngo/report/volunteer/assign")
+    fun assignVolunteer(@RequestBody assignVolunteerDTO: AssignVolunteerDTO): ResponseEntity<HttpStatus> {
+        return try {
+            println("Assign volunteer")
+            ngoServices.assignVolunteer(assignVolunteerDTO)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        } catch (e: Exception) {
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
+    @GetMapping("/ngo/volunteers")
+    fun getAllVolunteers(@RequestParam email: String): ResponseEntity<List<Volunteer>> {
+        return try {
+            ResponseEntity.ok(ngoServices.getVolunteers(email))
+        } catch (e: Exception) {
+            ResponseEntity.ok(mutableListOf())
+        }
+    }
+
+    @DeleteMapping("/ngo/remove/volunteer")
+    fun deleteVolunteer(@RequestParam volEmail: String, @RequestParam ngoEmail: String):ResponseEntity<HttpStatus>{
+        return try{
+            ngoServices.deleteVolunteer(volEmail, ngoEmail)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        }catch (e: Exception){
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @PostMapping("/ngo/event/volunteers")
+    fun getNgoEventVolunteers(@RequestBody emails: VolunteersRequestDTO):ResponseEntity<MutableList<Volunteer>>{
+        return try{
+            ResponseEntity.ok(ngoServices.getVolunteersOfEvent(emails.emails))
+        }catch (e: Exception){
+            ResponseEntity.ok(mutableListOf())
+        }
+    }
 }

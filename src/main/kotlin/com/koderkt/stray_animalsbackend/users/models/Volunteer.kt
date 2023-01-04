@@ -7,11 +7,16 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Volunteer(
     @Id
     var id : String?,
+    var role:String,
     var userName: String,
     var email:String,
     var phone: String,
     var rescueCount: Int,
     var city: String,
-    var ngos: MutableList<String>
+    var status: Boolean,
+    var profileUrl: String,
+    var ngos: String,
+    var events: MutableList<String>,
+    var reports: MutableList<String>
 ) {
 }

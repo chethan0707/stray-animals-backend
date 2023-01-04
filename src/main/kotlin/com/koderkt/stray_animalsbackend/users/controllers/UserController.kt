@@ -67,5 +67,12 @@ class UserController() {
         return ResponseEntity.ok(users)
     }
 
-
+    @GetMapping("/user/reports")
+    fun getUserReports(@RequestParam userEmail: String):ResponseEntity<List<UserReports>?>{
+        return try{
+            ResponseEntity.ok(userServices.getUserReports(userEmail))
+        }catch (e:Exception){
+            ResponseEntity.ok(null)
+        }
+    }
 }

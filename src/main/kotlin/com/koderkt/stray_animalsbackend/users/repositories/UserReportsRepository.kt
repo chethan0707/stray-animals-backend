@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 interface UserReportsRepository : MongoRepository<UserReports, String> {
 
     fun findByngoId(email: String): List<UserReports>
+    fun findAllByuserId(userId:String):List<UserReports>
 }

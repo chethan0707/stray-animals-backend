@@ -15,7 +15,7 @@ class Event(
     var images: List<String>,
     var status: Boolean,
     var volunteersRequiredCount : Int,
-    var volunteers: List<String>,
+    var volunteers: MutableList<String>,
 ) {
 
 }

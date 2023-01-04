@@ -43,12 +43,15 @@ class UserServiceImpl(
             val userInfo = userRepository.findUserByEmail(userEmail)
             val user = userInfo.get()
             userReportsRepository.save(userReport)
-            user.userReports.add(userReport)
+            user.userReports.add(userReport.caseId)
             userRepository.save(user)
         }catch (e: Exception){
-            println(userReport.caseId)
             println(e.message)
         }
+    }
+
+    override fun getUserReports(userEmail: String): List<UserReports> {
+        return userReportsRepository.findAllByuserId(userEmail)
     }
 
     override fun getUsers(): List<User> {
