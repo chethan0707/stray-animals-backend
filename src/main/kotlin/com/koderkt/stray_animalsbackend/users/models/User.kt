@@ -12,6 +12,7 @@ class User(
     var role: String,
     var email: String,
     var profileURL: String,
-    var userReports: MutableList<String>
+    var userReports: MutableList<String>,
+    var adoptionPosts:MutableList<String>
 ) {
 }

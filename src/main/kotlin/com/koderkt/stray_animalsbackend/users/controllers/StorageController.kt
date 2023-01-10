@@ -22,6 +22,8 @@ class StorageController {
     @GetMapping("/download/{fileName}")
     fun downloadFile(@PathVariable fileName: String): ResponseEntity<ByteArrayResource?>? {
         println(fileName)
+        println("Hello there download photo")
+
         val data: ByteArray? = service.downloadFile(fileName)
         val resource = data?.let { ByteArrayResource(it) }
         if (data != null) {

@@ -33,15 +33,31 @@ class VolunteerController {
 
 
 
+    @PostMapping("/volunteer/update")
+    fun updateVolunteer(@RequestBody volunteer: Volunteer):ResponseEntity<HttpStatus>{
+        return try {
+
+            volunteerServices.updateVolunteer(volunteer)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        }catch (e: Exception){
+            println(e.message)
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
     @GetMapping("/volunteer/get")
     fun getVolunteer(@RequestParam email: String): ResponseEntity<Volunteer?>{
-        val user = volunteerServices.getVolunteer(email)
-        println("Hello volunteer")
-        if(user.isPresent) {
-            println(user.get().userName)
-            return ResponseEntity.ok(user.get())
-        }
-        return ResponseEntity.ok(null)
+      return  try {
+           println("Hello volunteer")
+           val user = volunteerServices.getVolunteer(email)
+           if(user.isPresent) {
+               println(user.get().email)
+               return ResponseEntity.ok(user.get())
+           }
+          return ResponseEntity.ok(null)
+       }catch (e: Exception){
+           println(e.message)
+           return ResponseEntity.ok(null)
+       }
     }
 
     @GetMapping("/volunteers")
@@ -55,13 +71,15 @@ class VolunteerController {
     @GetMapping("/volunteer/reports")
     fun getReports(@RequestParam email: String): ResponseEntity<MutableList<UserReports>>{
         return try{
+            println("Hello")
             val reports: MutableList<UserReports> = mutableListOf()
             val volunteer = volunteerServices.getVolunteer(email).get()
-
+            println(volunteer.email)
             for(id in volunteer.reports){
                 val report = volunteerServices.getUserReport(id)
                 reports.add(report)
             }
+            println(reports.size)
 
             ResponseEntity.ok(reports)
         }

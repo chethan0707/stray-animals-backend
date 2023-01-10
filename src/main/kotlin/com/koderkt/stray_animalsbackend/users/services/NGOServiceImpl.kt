@@ -2,9 +2,7 @@ package com.koderkt.stray_animalsbackend.users.services
 
 import com.koderkt.stray_animalsbackend.users.models.*
 import com.koderkt.stray_animalsbackend.users.models.dto.AssignVolunteerDTO
-import com.koderkt.stray_animalsbackend.users.repositories.EventRepository
-import com.koderkt.stray_animalsbackend.users.repositories.NGORepository
-import com.koderkt.stray_animalsbackend.users.repositories.UserReportsRepository
+import com.koderkt.stray_animalsbackend.users.repositories.*
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.geo.Point
@@ -20,9 +18,13 @@ class NGOServiceImpl : NGOServices {
     lateinit var userReportsRepository: UserReportsRepository
     @Autowired
     lateinit var eventRepository: EventRepository
-
+    @Autowired
+    lateinit var adoptionRepository: AdoptionRepository
     @Autowired
     lateinit var volunteerServices: VolunteerServices
+
+    @Autowired
+    lateinit var userRepository: UserRepository
     override fun createNGO(newNGO: NGODto): String {
         return try {
             val exi = ngoRepository.findNGOByEmail(newNGO.email)
@@ -54,8 +56,7 @@ class NGOServiceImpl : NGOServices {
 
     override fun updateNGO(ngo: NGO): String {
         return try {
-            var exiNGO: NGO = ngoRepository.findNGOById(ngo.id)
-            exiNGO = ngo
+            ngoRepository.save(ngo)
             "User updated successfully"
         } catch (e: Exception) {
             (e.message.toString())
@@ -157,5 +158,31 @@ class NGOServiceImpl : NGOServices {
             volunteers.add(volunteerServices.getVolunteer(i).get())
         }
         return volunteers
+    }
+
+    override fun getAdoptions(ngoEMail: String): List<AdoptionPost> {
+        return adoptionRepository.getAdoptionPostByngoID(ngoEMail)
+    }
+
+    override fun updateAdoptionStatus(id: String, userEmail: String) {
+        val adoption = adoptionRepository.findById(id).get()
+        adoption.status = true
+        adoption.adoptedBy = userEmail
+        adoptionRepository.save(adoption)
+
+    }
+
+    override fun addAdoptionPost(adoptionPost: AdoptionPost) {
+        adoptionRepository.save(adoptionPost)
+    }
+
+    override fun getAdoptionRequestUsers(id: String): MutableList<User> {
+        val users = mutableListOf<User>()
+        val adoptionPost = adoptionRepository.findById(id).get()
+        for (key in adoptionPost.requestList.keys){
+                val user = userRepository.findUserById(key)
+                users.add(user)
+        }
+        return users
     }
 }

@@ -24,7 +24,13 @@ class VolunteerServiceImpl(
     }
 
     override fun updateVolunteer(volunteer: Volunteer): String {
-        TODO()
+        return try {
+            volunteerRepository.save(volunteer)
+            "Updated successfully"
+        }catch (e: Exception){
+            println(e.message)
+            ""
+        }
     }
 
     override fun getVolunteers(): List<Volunteer> {

@@ -28,6 +28,9 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-aws-core:2.2.6.RELEASE")
     implementation("com.auth0:java-jwt:4.2.1")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.0")
+    implementation("org.glassfish.jaxb:jaxb-core:4.0.0")
 
     compileOnly("org.mapstruct:mapstruct-processor:1.5.3.Final")
 }

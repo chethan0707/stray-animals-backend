@@ -1,5 +1,6 @@
 package com.koderkt.stray_animalsbackend.users.services
 
+import com.koderkt.stray_animalsbackend.users.models.AdoptionPost
 import com.koderkt.stray_animalsbackend.users.models.User
 import com.koderkt.stray_animalsbackend.users.models.UserReports
 import com.koderkt.stray_animalsbackend.users.repositories.UserRepository
@@ -21,6 +22,10 @@ interface UserServices{
     fun updateReport(userReport: UserReports)
 
     fun getUserReports(userEmail: String):List<UserReports>
+
+    fun joinAdoptionRequestList(adoptionID: String, userEmail: String, time:String)
+
+    fun getAdoptionsPostsOfUser(userID: String): List<AdoptionPost>
 }
 
 

@@ -1,7 +1,9 @@
 package com.koderkt.stray_animalsbackend.users.services
 
+import com.koderkt.stray_animalsbackend.users.models.AdoptionPost
 import com.koderkt.stray_animalsbackend.users.models.User
 import com.koderkt.stray_animalsbackend.users.models.UserReports
+import com.koderkt.stray_animalsbackend.users.repositories.AdoptionRepository
 import com.koderkt.stray_animalsbackend.users.repositories.UserReportsRepository
 import com.koderkt.stray_animalsbackend.users.repositories.UserRepository
 import org.springframework.stereotype.Service
@@ -9,6 +11,7 @@ import java.util.*
 
 @Service
 class UserServiceImpl(
+    private val adoptionRepository: AdoptionRepository,
     private val userRepository: UserRepository,
     private val userReportsRepository: UserReportsRepository,
 
@@ -21,10 +24,7 @@ class UserServiceImpl(
 
     override fun updateUser(user: User): String {
         return try {
-            val exiUser: User = userRepository.findUserById(user.id)
-            exiUser.email = user.email
-            exiUser.phone = user.phone
-            exiUser.userName = user.userName
+            userRepository.save(user)
             "User updated successfully"
         } catch (e: Exception) {
             (e.message.toString())
@@ -53,6 +53,30 @@ class UserServiceImpl(
     override fun getUserReports(userEmail: String): List<UserReports> {
         return userReportsRepository.findAllByuserId(userEmail)
     }
+
+    override fun joinAdoptionRequestList(adoptionID: String, userEmail: String,time:String) {
+        try {
+            val adoptionPost = adoptionRepository.findById(adoptionID).get()
+            adoptionPost.requestList.put(userEmail,time)
+            adoptionRepository.save(adoptionPost)
+            var user = userRepository.findUserById(userEmail)
+            user.adoptionPosts.add(adoptionID)
+            userRepository.save(user)
+        }catch (e: Exception){
+            println(e.message)
+        }
+    }
+
+    override fun getAdoptionsPostsOfUser(userId: String): List<AdoptionPost> {
+        val user = userRepository.findUserById(userId)
+        val adoptionPosts = mutableListOf<AdoptionPost>()
+        for (i in user.adoptionPosts){
+            val ppost = adoptionRepository.findById(i).get()
+            adoptionPosts.add(ppost)
+        }
+        return adoptionPosts
+    }
+
 
     override fun getUsers(): List<User> {
         return userRepository.findAll()

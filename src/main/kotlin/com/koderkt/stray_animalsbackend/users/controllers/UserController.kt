@@ -1,5 +1,6 @@
 package com.koderkt.stray_animalsbackend.users.controllers
 
+import com.koderkt.stray_animalsbackend.users.models.AdoptionPost
 import com.koderkt.stray_animalsbackend.users.models.User
 import com.koderkt.stray_animalsbackend.users.models.UserReports
 import com.koderkt.stray_animalsbackend.users.services.StorageService
@@ -46,8 +47,14 @@ class UserController() {
         }
     }
     @PostMapping("/user/update")
-    fun updateUser(@RequestBody user: User){
-        userServices.updateUser(user)
+    fun updateUser(@RequestBody user: User):ResponseEntity<HttpStatus>{
+        return try{
+            println(user.userName)
+            userServices.updateUser(user)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        }catch (e: Exception){
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
 
@@ -73,6 +80,27 @@ class UserController() {
             ResponseEntity.ok(userServices.getUserReports(userEmail))
         }catch (e:Exception){
             ResponseEntity.ok(null)
+        }
+    }
+
+
+    @PostMapping("/user/join/requestlist")
+    fun joinRequestList(@RequestParam adoptionID:String, @RequestParam userEmail: String, @RequestParam time:String):ResponseEntity<HttpStatus>{
+        return try{
+            userServices.joinAdoptionRequestList(adoptionID, userEmail, time)
+            ResponseEntity.ok(HttpStatus.ACCEPTED)
+        }catch (e: Exception){
+            ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+    @GetMapping("/user/posts")
+
+    fun getAdoptionPosts(@RequestParam userId: String):ResponseEntity<List<AdoptionPost>>{
+        return try{
+            ResponseEntity.ok(userServices.getAdoptionsPostsOfUser(userId))
+        }catch (e: Exception){
+            println(e.message)
+            ResponseEntity.ok(mutableListOf())
         }
     }
 }
